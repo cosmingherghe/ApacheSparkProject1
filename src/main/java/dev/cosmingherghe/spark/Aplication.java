@@ -4,6 +4,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import static org.apache.spark.sql.functions.*;
+
 public class Aplication {
 
     public static void main(String args[]) {
@@ -28,5 +30,22 @@ public class Aplication {
 
         // Show only 2 columns
         df.show(2);
+
+        /* Add a new column called full name with the concatenation
+        of the first and last name together & add static concat import + all functions.
+
+        * Transforming the data and the data from object.
+         */
+        df = df.withColumn("full_name",
+                concat(df.col("last_name"),
+                        lit(", "),
+                        df.col("first_name")));
+        df.show();
+
+        // Another transformation - We only want to see the comments that have numbers in them.
+        df = df.filter(df.col("comment").rlike("\\d+"))
+                .orderBy(df.col("last_name").asc());
+        df.show();
+
     }
 }
