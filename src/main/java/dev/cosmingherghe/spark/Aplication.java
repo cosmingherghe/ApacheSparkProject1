@@ -2,7 +2,10 @@ package dev.cosmingherghe.spark;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
+
+import java.util.Properties;
 
 import static org.apache.spark.sql.functions.*;
 
@@ -47,5 +50,15 @@ public class Aplication {
                 .orderBy(df.col("last_name").asc());
         df.show();
 
+        // Saving data into a database
+        String dbConnectionUrl = "jdbc:postgresql://localhost/course_data"; // <<- You need to create this database
+        Properties prop = new Properties();
+        prop.setProperty("driver", "org.postgresql.Driver");
+        prop.setProperty("user", "postgres");
+        prop.setProperty("password", "password"); // <- The password you used while installing Postgres
+
+        df.write()
+                .mode(SaveMode.Overwrite)
+                .jdbc(dbConnectionUrl, "project1", prop);
     }
 }
